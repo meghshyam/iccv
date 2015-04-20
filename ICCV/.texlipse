@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Thu Mar 26 18:58:51 IST 2015
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=paper_iccv.tex
+outputFile=paper_iccv.pdf
+langSpell=en
+markDer=true
+srcDir=
