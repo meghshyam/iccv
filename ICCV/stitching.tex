@@ -62,8 +62,8 @@ Aligning input images, finding features, and then compositing these
 images into ultra wide photographs is one of the success stories of
 computer vision.  Virtually most recent consumer cameras have this
 technology embedded.  The success of the method rely significantly in
-finding common features in the images taken, and thereby finding an
-appropriate match is found.
+finding common features in the images taken, and thereby identifying an
+appropriate match.
 
 Unfortunately several scenes contain situations when this process is
 defeated.  In designs where patterns are repeated, the matching
@@ -114,7 +114,7 @@ images are adjacent horizontally, one can choose to adjust
 thresholds in feature matching algorithm to hunt for otherwise elusive
 matching pairs. 
 
-{\bf Contributions} The main technical contributions of this paper is
+{\bf Contributions} The main technical contribution of this paper is
 that it improves the state of the art in mosaicing.  We assume that
 the imagery is acquired by a quadcopter for the reasons mentioned
 above. Sending a battery of images from a quadcopter to an image
@@ -124,31 +124,31 @@ images. Sending a sampled version of images to a manageable number $N$
 of images, with $O(N^2)$ possible areas to match for features, also
 does not work since the sampled image contains dead space.  In this
 paper, we use positional information that lends itself to a graceful
-$O(N)$ algorithm.  Some sample results are shown in Fig.~\ref{fig:teaser}.
+$O(N)$ algorithm.  Some sample results are shown in Figure~\ref{fig:teaser}.
 Other results are available in the experiments section and also in the
 supplementary material.
 
-{\bf Challenges} In most stitching applications, both the scene and
-the camera are stationary.  However when pictures are taken by a
-flying quadcopter, virtually all relevant pictures that cover the
-panaroma are taken from differing positions (by definition).  This
-makes the problem harder than typical mosaicing problems.  In this
-paper, we assume that the scene lies on a planar surface. The standard
-homography computation is still not possible because the camera (the
-quadcopter) is moving. We reduce the mosaicing problem to the stereo
-problem and are thus able to complete the panaroma.
+{\bf Limitations} In this paper, we assume that the scene lies on a
+planar surface, or can be deemed to lie on a planar surface. The
+standard homography computation is still possible because of the dead
+spaces.  We reduce the mosaicing problem to the stereo problem and are
+thus able to complete the panorama.
 
-The rest of this paper is organized as follows.
-\verb+TODO+
+The rest of this paper is organized as follows.  In the next section,
+we discuss related work.  Subsequently we describe the main steps in
+our process, and justify the process in Section~\ref{sec:results} with
+experimental results.  The data and the code will be made available
+later, but as of now it is available in the supplementary material.
+The final section discusses future work.
 
 \section{Related Work}
 \verb+TODO+
 
 \section{Methodology}
 
-The goal of this paper is to compute a panaroma of a scene lying on
+The goal of this paper is to compute a panorama of a scene lying on
 one or many planar surfaces.  A schematic of two possible scenes for
-this problem is shown in Fig.~\ref{fig:schematic}.
+this problem is shown in Figure~\ref{fig:schematic}.
 
 \begin{figure}[h!]
   \centering
@@ -164,7 +164,7 @@ this problem is shown in Fig.~\ref{fig:schematic}.
 
 
 The method adopted consists of three steps described below. An
-overview is shown in Fig.~\ref{fig:workflow}.  In brief, we
+overview is shown in Figure~\ref{fig:workflow}.  In brief, we
 systematically acquire a video of the scene, reduce the large number
 of images into a manageable number, and finally mashup the images
 acquired from different positions into a mosaic.
@@ -177,7 +177,7 @@ acquired from different positions into a mosaic.
     step (column 2), interesting images are constructed by clustering
     the video into regions based on position. A mosaic is constructed
     for each cluster.  A graph (column 3) is constructed, to
-    facilitate a super-panaroma (last column).  }
+    facilitate a super-panorama (last column).  }
 \end{figure}    
 
 
@@ -192,12 +192,12 @@ quadcopter is beyond the scope of this paper.
 
 The quadcopter returns with a video of the scene.  Any short video of
 about a minute or more when given to a stitching program such as
-Autostitch overwhelms the progams rendering it unusable. In the rest
+Autostitch overwhelms the programs rendering it unusable. In the rest
 of this section, we use Autostitch to indicate state of the art
 stitching programs such as Autostitch, Photoshop, etc.
 
 \subsection{Acquiring interesting images}
-Our goal in this step is to reduce the amount of data and produce a
+Our goal in this step is to reduce the amount of input data and produce a
 set of interesting images.  In other words, we wish to convert a video
 into an album of images.  We employ fairly standard methods available
 in the literature.  For each frame, we compute a set of global image
@@ -212,14 +212,14 @@ give  approximate information of positions.  It is to be noted that
 this information can be quite incorrect.  However the mix of
 positional information and image features is often sufficient to
 produce the necessary subset of `interesting images' which may now
-given as input to Autostitch. Fig.~\ref{fig:selection} shows this
+be given as input to Autostitch. Figure~\ref{fig:selection} shows this
 process. 
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.49\textwidth]{figures/selection} 
   \caption{ \label{fig:selection} A video transformed into a set of
-    interesting images for purposes of panaroma creation.  }
+    interesting images for purposes of panorama creation.  }
 \end{figure}    
 
 
@@ -242,23 +242,24 @@ matches; the graph will end up with multiple (disconnected)
 components.  We next compute multiple spanning trees for the various
 components. If the result is single tree, then we stitch all pictures
 using the homographies.  The spanning tree is an $O(N)$ structure. The
-process is described in Fig.~\ref{fig:graph}.
+process is described in Figure~\ref{fig:graph}.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.49\textwidth]{figures/graph} 
   \caption{ \label{fig:graph} Interesting images acquired are
-    segmented and individual (mini-panaromas) are constructed. These
-    are then later combined into the desired (super)panaroma.  }
+    segmented and individual (mini-panoramas) are constructed. These
+    are then later combined into the desired (super)panorama.  }
 \end{figure}    
 
-\subsection{Super-panaromas}
+
+\subsection{Super-panoramas}
 We assume that the output of the previous step has resulted in
 multiple spanning trees where each cluster center corresponds to a
 specific depth. We now create individual panoramas for each spanning
-tree; we term these as mini-panaromas. We then proceed to create the
-desired output, termed super-panorama.  A super-panaroma must be
-created from mini-panaromas; these usually correspond to different
+tree; we term these as mini-panoramas. We then proceed to create the
+desired output, termed super-panorama.  A super-panorama must be
+created from mini-panoramas; these usually correspond to different
 depths for at least two reasons.
 
 First, it is invariably difficult, if not impossible, to control a
@@ -267,21 +268,33 @@ aerodynamics and the thrust produced tends to make the quadcopter
 drift.  Second, it might also be necessary to let the quadcopter probe
 and come closer to the scene so as to get a ``good picture''.
 
-A super-panaroma is done using a two step process. Assume two trees in
+A super-panorama is done using a two step process. Assume two trees in
 the forest corresponding to area A and area B of the scene (see
-Fig.~\ref{fig:stereo}). 
+Figure~\ref{fig:stereo}). 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/move} 
-  \caption{ \label{fig:stereo} ...  }
+  \includegraphics[width=0.4\textwidth]{figures/move} \\
+  \includegraphics[width=0.4\textwidth]{figures/stereo} 
+  \caption{ \label{fig:stereo} Top: The virtual picture as seen from position B'
+    is computed using Equation~\ref{eq:moveRelation} from the real picture
+    taken from B.  Bottom: Using the disparity, and the baseline width
+  it is possible to compute the scene from the view point of A.}
 \end{figure}    
-Assume that a mini-panaroma is created from these two areas, and the
+Assume that a mini-panorama is created from these two areas, and the
 depth of the planar surface from the camera is more for A, than for
-B. We then take the mini-panaroma image captured at Y, and `move' it to
-a new location Y’ whose depth (from the imaged wall) is the same as
-that of X. (The resulting image Y’ will be smaller than Y). We can now
-think of these two images X and Y’ forming a stereo pair, so using the
-stereo disparity formula we can ``place'' Y’ from the view point of X.
+B. We then take the mini-panorama image captured at B, and `move' it to
+a new location B’ whose depth (from the imaged wall) is the same as
+that of A. The resulting image  will be smaller than: the images are
+related by the equation
+\begin{equation}
+  \label{eq:moveRelation}
+  {\bf \frac{x'}{x} = \frac{Z}{Z'}}
+\end{equation}
+
+We can now treat the resulting images from A (unchanged) and B’
+(computed from Equation~\ref{eq:moveRelation}) forming a stereo pair.
+Using the stereo disparity formula we can ``place'' the image from B from the
+view point of A thereby creating a super-panorama.
 
 \input{experiments_results}
 
