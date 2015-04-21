@@ -28,17 +28,17 @@ One way to produce some sort of mosaic was to simply reduce the amount
 of data given to Autostitch.  Figure \ref{fig:uniformsampled_sac3}
 shows uniformly time sampled images from complete video.  When these
 uniformly sampled images are given to Autostitch or to Adobe
-Photoshop, we find (Fig.~\ref{fig:results_sac3_timesmapled})  that the
+Photoshop, we find (Figure \ref{fig:results_sac3_timesmapled})  that the
 results are not satisfactory.
 
 Instead of feeding time-sampled images, we ran our saliency selection
-algorithm on the video. Fig.~\ref{fig:selected_sac3} shows examples of
+algorithm on the video. Figure \ref{fig:selected_sac3} shows examples of
 selected images. Many of the images are similar to the time sampled
 version; however, the occasional differences are enough to make
 Autostitch work. 
 
 Using only $N=5$ images, the results are shown in
-Fig.~\ref{fig:results_sac3_timesmapled}.
+Figure~\ref{fig:results_sac3_timesmapled}.
 
 
 \begin{figure*}[htb!]
@@ -67,7 +67,7 @@ Fig.~\ref{fig:results_sac3_timesmapled}.
 \caption{Output of state of the art photo stitchers on uniformly time
   sampled images. As time sampled images do not guarantee 
   coverage of the scene, the panorama is broken. The top portions do
-  not belong at the right place (see Fig.~\ref{fig:results_sac3})}
+  not belong at the right place (see Figure~\ref{fig:results_sac3})}
 \label{fig:results_sac3_timesmapled}
 \end{figure*}
 
@@ -118,7 +118,7 @@ considered.
 Our next selection of experiments were conducted in an indoor
 environment with some natural light.  The input stream had about 4300
 images. The selection algorithm pruned the video into N=4 images. A
-sample of the selected images are seen in Fig.~\ref{fig:idc_selected}
+sample of the selected images are seen in Figure~\ref{fig:idc_selected}
 
 \begin{figure}
 \centering
@@ -133,7 +133,7 @@ sample of the selected images are seen in Fig.~\ref{fig:idc_selected}
 There were two disconnected components in the resulting graph.
 Autostitch was unable to produce any reasonable output as seen in
 Figure~\ref{fig:idc_indoor_comparison}.  The ground truth can be seen
-in Fig.~\ref{fig:idc_indoor_groundtruth}.  One can see a better
+in Figure~\ref{fig:idc_indoor_groundtruth}.  One can see a better
 orthographic view of the posters in a composite manner.
 
 
@@ -149,15 +149,15 @@ Figure \ref{fig:idc_indoor_comparison} shows the comparison of outputs of state
 of the art stitchers with output of our algorithm. 
 
 \begin{figure*}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
 \includegraphics[width=\linewidth]{figures/idc_indoor/autostitch.jpg}
 \caption{Autostitch Result}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
 \includegraphics[width=\linewidth]{figures/idc_indoor/photoshop.jpg}
 \caption{Photoshop Result}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{\textwidth}
 \includegraphics[width=\linewidth]{figures/idc_indoor/our_result.jpg}
 \caption{Our Result}
 \end{subfigure}
@@ -207,15 +207,15 @@ stitchers.}
 
 
 \begin{figure*}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
 \includegraphics[width=\linewidth]{figures/green_red/autostich.jpg}
 \caption{Autostitch Result}
 \end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
 \includegraphics[width=\linewidth]{figures/green_red/photoshop_output.jpg}
 \caption{Photoshop Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\end{subfigure}\\
+\begin{subfigure}[b]{\textwidth}
 \includegraphics[width=\linewidth]{figures/green_red/our_result.jpg}
 \caption{Our Result}
 \end{subfigure}

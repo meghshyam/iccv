@@ -21,7 +21,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{Mosaicing Imagery with Dead Space}
+\title{Mosaicing Quad-Copter Imagery Containing Empty Space}
 
 \author{Meghshyam G. Prasad and Sharat Chandran\\
 Dept of Computer Science \& Engineering, \\
@@ -44,15 +44,8 @@ School of Computing, NUS, Singapore\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-
-{\color{red} 
-\noindent \verb+ Need to converge on title: +
-
-\noindent \verb+"Dead Space" or "Vacant Spaces"+ 
-
-}
-
-   
+This paper focuses on a method to construct panoramas captured from a quad-copter that 
+consists of scenes with large regions of empty space.  These empty spaces yields little to no features to match between input images making them challenging for existing mosaicing techniques.  We describe a framework that is able to handle this unique input by leveraging the availability of the IMU data from the quad-copter that is synchronized with the input images.  Specifically, our method uses the accompanying IMU data to select a subset of images that contain interesting scene content.  These images are then grouped into subgraphs, again using the IMU data, that can be stitched into a series of  non-overlapping mini-panoramas.  The gaps of these mini-panoramas represent regions of empty spaces in the scene.  We again use the IMU data together with coarse stereo reconstruction to determine the appropriate images in the input sequence to use to fill in the empty spaces.  We demonstrate the efficacy of our approach on a number of input sequences that cannot to be mosaiced by existing methods.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
@@ -142,7 +135,34 @@ later, but as of now it is available in the supplementary material.
 The final section discusses future work.
 
 \section{Related Work}
-\verb+TODO+
+
+Panoramic image stitching or Image Mosaicing is well-studied problem in the
+field of computer vision. Though it may not be possible to list all works,
+(representatives include \cite{Milgram1975}, \cite{Milgram1977}, \cite{Capel},
+\cite{Szeliski1997} \cite{Brown}, \cite{Brown07}), one may look
+\cite{Szeliski05imagealignment} for a thorough survey.
+Also, there are various freeware as well as commercial softwares available  for
+performing image stitching, prominent ones are AutoStitch \cite{autostitch},
+Microsoft’s Image Compositing Editor \cite{ICE}, and Adobe’s Photoshop CS6 \cite{photoshop}.
+
+Gao et al. \cite{Gao} have used concept of ``Dual Homography'' to stitch
+non-planar patches in images. Lhuillier et al.\cite{Lhuillier} have successfully
+stitched images with motion parallax i.e., relief mosaics, using joint view triangulation. 
+Acha et al. \cite{Acha} aligned dynamic scenes using notion of ``dynamics
+constancy''. 
+
+Agarwala et al.\cite{Agarwala2006} had used Markov Random Field (MRF)
+optimization for stitching relatively sparse set of images captured using
+handheld still camera which is moved along the scene. Eden et al. \cite{Eden}
+were able to stitch images with large exposure difference as well as large
+scene motion into single HDR quality image without using any additional camera hardware.
+
+All of the image mosaicing methods works only when there is a
+``intersection'' in feature space of images to be stitched. But, when there are
+``gaps'' (either physical or due to lach of features) between images to be
+stiched, we may have to use some other alignement method. In this paper, we use
+stereo method to do alignement of images. Peleg et al. \cite{Peleg} have used
+similar concept to create Stereo Panorama with a single camera.
 
 \section{Methodology}
 
@@ -319,4 +339,7 @@ quadcopter can be problematic; for instance the quadcopter could have
 severe yaw and roll.  Vision based algorithms to control such
 quadcopters might be quite useful.
 
+
+\bibliographystyle{ieee}
+\bibliography{egbib}
 \end{document}
