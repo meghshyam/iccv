@@ -79,7 +79,7 @@ absence of features, or when features can get confused.
 
 \begin{figure}[t!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/teaser2}
+  \includegraphics[width=0.49\textwidth]{figures/teaser1}
   \caption{ \label{fig:teaser} The ground truth picture shows a common
     situation in which dead space exists between large pictures (here,
     two poster boards). The input images (second column) show parts of
@@ -172,16 +172,14 @@ this problem is shown in Figure~\ref{fig:schematic}.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/indoor} 
-  \includegraphics[width=0.49\textwidth]{figures/outdoor}
+  \includegraphics[width=0.49\textwidth]{figures/indoor}   
   \caption{ \label{fig:schematic} Problem definition: Dead space is
-    encountered in both indoor and outdoor scenes.  When individual
+    encountered in varoious scenes.  When individual
     portions are captured by a quadcopter, how does one create the
     complete mosaic given that common features are either not
     available, or confusing?
   }
 \end{figure}    
-
 
 The method adopted consists of three steps described below. An
 overview is shown in Figure~\ref{fig:workflow}.  In brief, we
@@ -193,11 +191,14 @@ acquired from different positions into a mosaic.
   \centering
   \includegraphics[width=0.49\textwidth]{figures/Workflow} 
   \caption{ \label{fig:workflow} Overview: Input imagery is
-    systematically acquired (column 1) by a quadcopter.  In the next
-    step (column 2), interesting images are constructed by clustering
-    the video into regions based on position. A mosaic is constructed
-    for each cluster.  A graph (column 3) is constructed, to
-    facilitate a super-panorama (last column).  }
+    systematically acquired (top Row, column 1) by a quadcopter.  In the next
+    step (top row, column 2), interesting images are found by clustering
+    the video into regions based on IMU data.  A graph (top row, column 3) is
+    constructed by finding homography among only neighbourhood(
+    established from again IMU data) images. For each connected component in a
+    graph, a mini-panoramas is created (bottom row, right column) which are then
+    joined together into super panorama (bottom row, left column)using IMU
+    data.}
 \end{figure}    
 
 
@@ -238,8 +239,11 @@ process.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.49\textwidth]{figures/selection} 
-  \caption{ \label{fig:selection} A video transformed into a set of
-    interesting images for purposes of panorama creation.  }
+  \caption{ \label{fig:selection}  Using IMU data, an image stream is
+  transformed into a set of interesting images for purposes of panorama creation. IMU
+    data is hierarchically clustered to find out positions which may cover the
+    imaging space. Clustering threshold is kept in a such a way that images
+    taken from these points will cover whole scene optimally.}
 \end{figure}    
 
 
@@ -269,7 +273,7 @@ process is described in Figure~\ref{fig:graph}.
   \includegraphics[width=0.49\textwidth]{figures/graph} 
   \caption{ \label{fig:graph} Interesting images acquired are
     segmented and individual (mini-panoramas) are constructed. These
-    are then later combined into the desired (super)panorama.  }
+    are then later combined into the desired (super)panorama using IMU data.}
 \end{figure}    
 
 
