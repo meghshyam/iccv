@@ -1,11 +1,12 @@
 \section{Experiments and Results}
 \label{sec:results}
 
+% MSB - what ground truth?  This is confusing, what do you mean by ground truth?
 All our experiments have been completed with the inexpensive consumer
-quadcopter called Parrot's AR Drone 2.0. We have used the ROS based
+quadcopter called a Parrot's AR Drone 2.0. We have used the ROS based
 ARDrone Autonomy Driver to communicate with the drone. For the
-purposes of establishing the ground truth, pictures were taken with a
-5 mega pixel camera.
+purpose of this paper, we also took a  picture of the scene from a
+distance with a 5 mega-pixel camera.
 
 We have implemented our algorithm in C++ using the OpenCV library
 (OpenCV 2.4.9). Experiments were performed on a PC with Intel Core i7
@@ -15,97 +16,50 @@ as well as the data sets used in this paper will be made publicly
 available.
 
 
-\subsection{Establishing Correctness}
+\subsection{Selecting Images}
 
 In our first experiment, we wanted to ensure that the selection of
-images done was comprehensive.  We sent the drone to recce an outdoor
-scene with no dead space. This experiment was conducted in an outdoor
-environment. We note here that there were approximately 9000 images in
-the raw video.  Autostitch was unable to cope when fed with this large
-number. 
+images done was comprehensive and useful.  We sent the drone to image 
+an outdoor scene with no vacant space. This experiment was conducted
+in an outdoor environment. We note here that there were approximately
+3000 images in the raw video.  Autostitch was unable to cope  when fed
+with this large number of frames.
 
 One way to produce some sort of mosaic was to simply reduce the amount
-of data given to Autostitch.  Figure \ref{fig:uniformsampled_sac3}
-shows uniformly time sampled images from complete video.  When these
-uniformly sampled images are given to Autostitch or to Adobe
-Photoshop, we find (Figure \ref{fig:results_sac3_timesmapled})  that the
-results are not satisfactory.
+of data given to Autostitch.  Fig.~\ref{fig:sac3}(a) shows uniformly
+(time) sampled images from the video.  When these sampled images are
+given to Autostitch or to Adobe Photoshop, we find
+(Figure~\ref{fig:sac3}(b)) that these programs are able to produce
+some output, but the results are not satisfactory.
 
+% MSB - no details to the saliency selection algorithm.
 Instead of feeding time-sampled images, we ran our saliency selection
-algorithm on the video. Figure \ref{fig:selected_sac3} shows examples of
-selected images. Many of the images are similar to the time sampled
-version; however, the occasional differences are enough to make
-Autostitch work. 
-
-Using only $N=5$ images, the results are shown in
-Figure~\ref{fig:results_sac3_timesmapled}.
-
-
-\begin{figure*}[htb!]
-\centering
-\includegraphics[width=0.19\linewidth]{figures/sac3/uniform_sampled/1.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/uniform_sampled/5.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/uniform_sampled/4.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/uniform_sampled/2.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/uniform_sampled/3.jpg}
-\caption{Uniformly sampled images from an outdoor video expedition.}
-\label{fig:uniformsampled_sac3}
-\end{figure*}
-
-\begin{figure*}[t!]
-\centering
-\begin{subfigure}[b]{0.4\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/sac3/uniform_sampled/autostitch.jpg}
-\caption{Autostitch Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/sac3/uniform_sampled/photoshop.jpg}
-\caption{Photoshop Result}
-\end{subfigure}
-\caption{Output of state of the art photo stitchers on uniformly time
-  sampled images. As time sampled images do not guarantee 
-  coverage of the scene, the panorama is broken. The top portions do
-  not belong at the right place (see Figure~\ref{fig:results_sac3})}
-\label{fig:results_sac3_timesmapled}
-\end{figure*}
+algorithm (as explained in Section~\ref{sec:selection}) on the video
+which resulted in $N = 5$ images.  Though the number of input images
+in the video is large, the total distance covered by the quadcopter in
+this duration (of around 90 seconds at 30fps) is small; thus the
+number of distinct images returned by the algorithm shows a dramatic
+reduction. Figure~\ref{fig:sac3}(c) shows examples of selected images.
+Many of the images are similar to the time sampled version; however,
+the occasional differences are enough to make Autostitch work. The
+results are shown in Figure~\ref{fig:sac3}(d).
 
 
-\begin{figure*}[htb!]
+\begin{figure*}[h!]
 \centering
-\includegraphics[width=0.19\linewidth]{figures/sac3/selected/1.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/selected/5.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/selected/4.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/selected/2.jpg}
-\includegraphics[width=0.19\linewidth]{figures/sac3/selected/3.jpg}
-\caption{Salient image selection from the set of approximately 9000
-  images using positional information.}
-\label{fig:selected_sac3}
-\end{figure*}
-
-
-\begin{figure*}
-\centering
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/sac3/autostitch.jpg}
-\caption{Autostitch Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/sac3/photoshop.jpg}
-\caption{Photoshop Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\includegraphics[width=\linewidth]{figures/sac3/our_result.jpg}
-\caption{Our Result}
-\end{subfigure}
-\caption{When salient images are given to Autostich and Photoshop, a
-  video can be used to create a panaromic mosaic provided there is no
-  dead space. We also show the results from our stitching algorithm.}
-\label{fig:results_sac3}
+\includegraphics[width=0.87\linewidth]{figures/ValidationResult}
+\caption{ (a) Uniformly sampled images from an outdoor video
+  expedition.  (b) Output of the state of the art photo stitchers
+  (left:Autostitch, right:Adobe Photoshop PS6) on uniformly time
+  sampled images.  As time sampled images do not guarantee coverage of
+  the scene, the panorama is broken. The top portions do not belong at
+  the right place (see (d) (c) Salient image selection from the set of
+  approximately 9000 images using positional information. (d) When
+  salient images are given to Autostich (left) and Photoshop (middle),
+  we can create a panoramic mosaic (since there are no vacant
+  spaces). We also show the results from our stitching algorithm
+  (bottom right).}
+\label{fig:sac3}
 \end{figure*}
 
 In summary, this experiment provides evidence to show that (a) our
@@ -113,103 +67,67 @@ saliency selection algorithm is reasonable and (b) our stitching
 results are comparable to that of Autostitch for the kind of scenes
 considered.
 
-\subsection{Indoor Imagery with Dead Space} 
+\subsection{Indoor Imagery with Vacant Spaces}
 
+% MSB - again, no details to the selection algorithm, so the reader will
+% have no idea how you came up to $N=4$.
 Our next selection of experiments were conducted in an indoor
-environment with some natural light.  The input stream had about 4300
-images. The selection algorithm pruned the video into N=4 images. A
-sample of the selected images are seen in Figure~\ref{fig:idc_selected}
+environment.  The input stream had about 4300
+images. The selection algorithm (Section~\ref{sec:selection}) pruned the video
+into $N=4$ images.
+A sample of the selected images are seen in Figure~\ref{fig:teaser}.
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results}
+\caption{(a) An outdoor scene captured by a standard camera in an
+  exhibition. The approach to the area is normally cordoned off and one
+  needs permission to get a quadcopter to take the picture.  Notice a
+  significant gap between the two posters.  (b) Pruned images from the
+  quadcopter video using our saliency algorithm. (c) Output of
+  Autostitch on the selected images. The mosaic is not reasonable
+  presumably because of the confusion in features. (d) Output of Adobe
+  Photoshop PS6 on the selected images. The vacant space posed a
+  problem to the feature matching algorithm, so instead of a mosaic,
+  individual pieces were output as mini-panaromas (e) Our output on
+  the selected images. We are able to join two posters (separated by
+  vacant space) using IMU data.}
+\label{fig:results}
+\end{figure*}
 
 There were two disconnected components in the resulting graph.
 Autostitch was unable to produce any reasonable output as seen in
-Figure~\ref{fig:idc_indoor_comparison}.  The ground truth can be seen
-in Figure~\ref{fig:idc_indoor_groundtruth}.  One can see a better
-orthographic view of the posters in a composite manner.
+Figure~\ref{fig:teaser}.  The scene, captured from a distance is also
+shown.  One can see a better orthographic view of the posters.
 
+\subsection{Outdoor Imagery with Vacant Space}
+Our next set of experiments were conducted in an outdoor
+environment. The input stream had about 12000 images. The selection
+algorithm pruned the video into $N=30$ images. A sample of the
+selected images are seen in Figure~\ref{fig:results}.  The scene as
+captured by a smartphone can also be seen, as well as the comparison
+of outputs of state of the art stitchers with output of our
+algorithm. Figure~\ref{fig:results} shows the comparison of outputs of
+state of the art stitchers with the output of our algorithm.
 
-Figure \ref{fig:idc_indoor_comparison} shows the comparison of outputs of state
-of the art stitchers with output of our algorithm. 
+% Figure \ref{fig:results2} shows comparison of outputs of state of the art
+% stitchers with output of our algorithm on another dataset.
 
-\begin{figure*}
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=\linewidth]{figures/idc_indoor/autostitch.jpg}
-\caption{Autostitch Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=\linewidth]{figures/idc_indoor/photoshop.jpg}
-\caption{Photoshop Result}
-\end{subfigure}
-\begin{subfigure}[b]{\textwidth}
-\includegraphics[width=\linewidth]{figures/idc_indoor/our_result.jpg}
-\caption{Our Result}
-\end{subfigure}
-\caption{Comparison of outputs of Autostich, Photoshop and our stitching
-algorithm on an indoor scene. Only our
-algorithm is able to show a complete super-panorama; state-of-the art
-stitchers can produce only one mini-panorama.}
-\label{fig:idc_indoor_comparison}
-\end{figure*}
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=0.8\linewidth]{figures/Purple_red}
+% \caption{(a) Another outdoor scene captured by a standard camera in an
+%   exhibition. The approach to the area is normally cordoned off and one
+%   needs permission to get a quadcopter to take the picture.  Notice a
+%   significant gap between the two posters.  (b) Pruned images from the
+%   quadcopter video using our saliency algorithm. (c) Output of
+%   Autostitch on the selected images. The mosaic is not reasonable
+%   presumably because of the confusion in features. (d) Output of Adobe
+%   Photoshop PS6 on the selected images. The vacant space posed a
+%   problem to the feature matching algorithm, so instead of a mosaic,
+%   individual pieces were output as mini-panaromas (e) Our output on
+%   the selected images. We are able to join two posters (separated by
+%   vacant space) using IMU data.}
+% \label{fig:results2}
+% \end{figure}
 
-One can see a better orthographic view of the posters in a composite
-manner. Autostitch was unable to produce any reasonable output as seen in
-Figure \ref{fig:idc_indoor_comparison}.
-
-\subsection{Outdoor Imagery with Dead Space}
-Our next set of experiments were conducted in an outdoor environment. The  
-input stream had about 12000 images. The selection algorithm pruned the video
-into N=30 images. A sample of the selected images are seen in Figure
-\ref{fig:green_red_selected}.
-
-The ground truth of outdoor scene can be seen in Figure
-\ref{fig:green_red_groundtruth}.
-
-\begin{figure*}
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=\linewidth]{figures/green_red/autostich.jpg}
-\caption{Autostitch Result}
-\end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
-\includegraphics[width=\linewidth]{figures/green_red/photoshop_output.jpg}
-\caption{Photoshop Result}
-\end{subfigure}\\
-\begin{subfigure}[b]{\textwidth}
-\includegraphics[width=\linewidth]{figures/green_red/our_result.jpg}
-\caption{Our Result}
-\end{subfigure}
-\caption{Comparison of outputs of Autostich, Photoshop and our stitching
-algorithm on the images selected of outdoor scene by our algorithm. Only our
-output is able to shows individual panoramas at their respective location
-approximately}
-\label{fig:green_red_comparison}
-\end{figure*}
-
-\begin{table*}
-\begin{tabular}{l|cc}
-\hline 
- & Indoor &  Outdoor \\
-\hline 
- Input sequence &
- \includegraphics[width=0.3\textwidth]{figures/idc_indoor/groundtruth.jpg} &
- \includegraphics[width=0.3\textwidth]{figures/green_red/groundtruth.jpg} \\
-\hline
- Selected Images & 	\includegraphics[width=0.22\textwidth]{figures/idc_indoor/selected/1.jpg}
-\includegraphics[width=0.22\textwidth]{figures/idc_indoor/selected/2.jpg}
-\includegraphics[width=0.22\textwidth]{figures/idc_indoor/selected/3.jpg}
-\includegraphics[width=0.22\textwidth]{figures/idc_indoor/selected/4.jpg}
-& \includegraphics[width=0.19\textwidth]{figures/green_red/selected/1.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/2.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/3.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/4.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/5.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/6.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/7.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/8.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/9.jpg}
-\includegraphics[width=0.19\textwidth]{figures/green_red/selected/10.jpg}
- \\       
-\end{tabular}
-\caption{Results}
-\end{table*}
-
-Figure \ref{fig:green_red_comparison} shows the comparison of outputs of
-state of the art stitchers with output of our algorithm.

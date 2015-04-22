@@ -3,6 +3,7 @@
 \usepackage{iccv}
 \usepackage{caption}
 \usepackage{times, graphicx, amsmath, amssymb, subcaption}
+\usepackage[]{algorithm2e}
 
 % Include other packages here, before hyperref.
 
@@ -21,7 +22,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{Mosaicing Quad-Copter Imagery Containing Empty Space}
+\title{Mosaicing Scenes with Vacant Spaces}
 
 \author{Meghshyam G. Prasad and Sharat Chandran\\
 Dept of Computer Science \& Engineering, \\
@@ -44,88 +45,111 @@ School of Computing, NUS, Singapore\\
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-This paper focuses on a method to construct panoramas captured from a quad-copter that 
-consists of scenes with large regions of empty space.  These empty spaces yields little to no features to match between input images making them challenging for existing mosaicing techniques.  We describe a framework that is able to handle this unique input by leveraging the availability of the IMU data from the quad-copter that is synchronized with the input images.  Specifically, our method uses the accompanying IMU data to select a subset of images that contain interesting scene content.  These images are then grouped into subgraphs, again using the IMU data, that can be stitched into a series of  non-overlapping mini-panoramas.  The gaps of these mini-panoramas represent regions of empty spaces in the scene.  We again use the IMU data together with coarse stereo reconstruction to determine the appropriate images in the input sequence to use to fill in the empty spaces.  We demonstrate the efficacy of our approach on a number of input sequences that cannot to be mosaiced by existing methods.
+  This paper focuses on a method to construct panoramas captured from
+  a quadcopter that consists of scenes with significant regions of
+  vacant spaces.  These vacant spaces yield little to no features to
+  match input images making them challenging for existing
+  mosaicing techniques.  
+
+  We describe a framework that is able to handle this unique input by
+  leveraging the availability of the inertial magnetic unit (IMU) data
+  from the quadcopter that is synchronized with the input images.
+  Specifically, our method uses the accompanying IMU data to select a
+  subset of images that contain interesting scene content.  These
+  images are then grouped into subgraphs, again using the IMU data,
+  that can be stitched into a series of non-overlapping
+  mini-panoramas.  The gaps of these mini-panoramas represent regions
+  of featureless spaces in the scene.  We once again use the IMU data
+  together with coarse stereo reconstruction to determine the
+  appropriate images in the input sequence to use to fill in the vacant
+  spaces.  We demonstrate the efficacy of our approach on a number of
+  input sequences that cannot to be mosaiced by existing methods.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Aligning input images, finding features, and then compositing these
-images into ultra wide photographs is one of the success stories of
-computer vision.  Virtually most recent consumer cameras have this
-technology embedded.  The success of the method rely significantly in
-finding common features in the images taken, and thereby identifying an
-appropriate match.
+Finding features and using them to align images to construct wide field
+of view panoramas is one of the success stories of
+computer vision.  Virtually all recent consumer cameras have this
+technology embedded.  The success of these methods relies significantly on
+finding common features in the images that can be used to established the
+ appropriate warps to register the images together.
 
-Unfortunately several scenes contain situations when this process is
-defeated.  In designs where patterns are repeated, the matching
-algorithm may incorrectly conclude which portions of the images are to
-be aligned. 
-%Figure 1 shows an example of this. 
-A more serious cause of concern is when the area to be imaged simply
-does not contain features.  This sort of situation occur in a variety
+There are scenes, however, that consist of image content that makes this
+challenging.  One situation is when scene patterns and texture are repeated.  
+This can make it challenging for matching to find appropriate matches.
+%Figure 1 shows an example of this.
+A more serious situation is when a scene area simply
+does not contain features.  This sort of situation occurs in a variety
 of situations such as paintings in an art exhibition, or posters in an
-auditorium.  Fig~\ref{fig:teaser} shows an example of this
-case. 
+auditorium.  Fig~\ref{fig:teaser} shows an example of this case.
 
-Indeed, one can imagine other situations where the viewer would like
-to stitch together pictures well separated with empty (in the mind of
-the viewer) or void spaces between them.  Our goal in this paper is to
-create a mosaic of panaromic imagery with `dead space';
-by `dead space' we mean portions of the input where a computer vision
-feature matching algorithm is defeated due to a high likelihood of
-absence of features, or when features can get confused.
+The goal in this paper is to create panoramic images of scenes that contain
+`vacant spaces'.  Vacant spaces occur when there are large homogeneous regions in 
+the imaged scene that have no features.   This results in scene regions that
+have no matches and therefore cannot be aligned using traditional mosaicing methods.
 
 \begin{figure}[t!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/teaser1}
-  \caption{ \label{fig:teaser} The ground truth picture shows a common
-    situation in which dead space exists between large pictures (here,
-    two poster boards). The input images (second column) show parts of
-    the imagery obtained. Even if each of the images of the two
-    individual posters can be stitched together (third column), the
-    state of the art method encounter the dead space and is unable to
-    make a complete mosaic.  It outputs either the first poster or the
-    second, but not both together.  Our method (last column) succeeds
-    since the imagery is acquired using a quadcopter that has
-    positional information.}
+  \includegraphics[width=0.57\textwidth]{figures/teaser.pdf}
+  \caption{ \label{fig:teaser} The long range photograph of a scene when probed
+    by a quadcopter results in the input images shown on the left.  The
+    state of the art methods (middle column) are unable to make a mosaic because the
+    vacant space (third picture on the left) does not seem to have any
+    matchable features with subsequent input images.
+    % situation in which dead space exists between large pictures (here,
+    % two poster boards). The input images (second column) show parts of
+    % the imagery obtained. Even if each of the images of the two
+    % individual posters can be stitched together (third column), the
+    % state of the art method encounter the dead space and is unable to
+    % make a complete mosaic.  It outputs either the first poster or the
+    % second, but not both together.  Our method (last column) succeeds
+    % since the imagery is acquired using a quadcopter that has
+    % positional information
+    }
 \end{figure}
 
-{\bf Key Idea} We propose to solve the dead space problem by using an
-inexpensive off-the-shelf flying device, such as a quadcopter.  An
-autonomous programmed quadcopter is particularly enticing because of
-its ability to fly to areas that are accessible to the human eye, but
-inaccessible for the human to reach.  Such areas do not lend
-themselves easily to high quality orthographic images. Our solution
-uses coarse positional information that a quadcopter can be assumed to
-have.  The proximity relationship that the resultant images have can
-be used to significantly reduce the search space.  Further, the
-proximity relationship also allows to vary the parameters involved in
-feature selection. For example, if there is reason to believe that two
-images are adjacent horizontally, one can choose to adjust
-thresholds in feature matching algorithm to hunt for otherwise elusive
-matching pairs. 
+{\bf Key Idea} We propose to solve the vacant space problem by using
+an inexpensive off-the-shelf flying device, such as a quadcopter which
+can be assumed to contain an inertial maganetic unit (IMU) that has
+positional information time synchronized with an input video.  The
+proximity relationship that the resultant images have can be used to
+significantly reduce the search space in finding matches.  Further,
+the proximity relationship also allows, in principle, to vary the
+parameters involved in feature selection. For example, if there is
+reason to believe that two images are adjacent horizontally, one can
+choose to adjust thresholds in feature matching algorithm to hunt for
+otherwise elusive matching pairs.
+
+We note that positions can be also be made available in other devices
+such as smartphones.  An autonomous programmed quadcopter, however, is
+particularly enticing because of its ability to fly to areas that are
+accessible to the human eye, but inaccessible for the
+human to reach.  Such areas do not lend themselves easily to high
+quality images.
+
 
 {\bf Contributions} The main technical contribution of this paper is
 that it improves the state of the art in mosaicing.  We assume that
 the imagery is acquired by a quadcopter for the reasons mentioned
 above. Sending a battery of images from a quadcopter to an image
-mosaicing (alternatively, stitching) algorithm such as Autostitch
+mosaicing algorithm such as Autostitch
 incapacitates the algorithm because of the sheer number of
 images. Sending a sampled version of images to a manageable number $N$
 of images, with $O(N^2)$ possible areas to match for features, also
-does not work since the sampled image contains dead space.  In this
+does not work since the sampled image contains vacant space.  In this
 paper, we use positional information that lends itself to a graceful
-$O(N)$ algorithm.  Some sample results are shown in Figure~\ref{fig:teaser}.
-Other results are available in the experiments section and also in the
-supplementary material.
+$O(N)$ algorithm.  A sample result of our approach is shown in
+Figure~\ref{fig:teaser}.  Other results are available in the
+experiments section and also in the supplementary material.
 
-{\bf Limitations} In this paper, we assume that the scene lies on a
-planar surface, or can be deemed to lie on a planar surface. The
-standard homography computation is still possible because of the dead
-spaces.  We reduce the mosaicing problem to the stereo problem and are
-thus able to complete the panorama.
+{\bf Limitations} In this paper, we assume that the
+scene lies on a planar surface, or can be deemed to lie on a planar surface. The
+standard homography computation is still not possible because of the
+vacant spaces. To overcome this, we reduce the mosaicing problem to
+the stereo problem and are thus able to complete the panorama.
+
 
 The rest of this paper is organized as follows.  In the next section,
 we discuss related work.  Subsequently we describe the main steps in
@@ -136,69 +160,92 @@ The final section discusses future work.
 
 \section{Related Work}
 
-Panoramic image stitching or Image Mosaicing is well-studied problem in the
-field of computer vision. Though it may not be possible to list all works,
-(representatives include \cite{Milgram1975}, \cite{Milgram1977}, \cite{Capel},
-\cite{Szeliski1997} \cite{Brown}, \cite{Brown07}), one may look
-\cite{Szeliski05imagealignment} for a thorough survey.
-Also, there are various freeware as well as commercial softwares available  for
-performing image stitching, prominent ones are AutoStitch \cite{autostitch},
-Microsoft’s Image Compositing Editor \cite{ICE}, and Adobe’s Photoshop CS6 \cite{photoshop}.
+Panoramic image stitching (alternatively, image mosaicing) is a
+well-studied problem in the field of computer vision.  Representative
+works include~\cite{Milgram1975}, \cite{Milgram1977}, \cite{Capel},
+\cite{Szeliski1997} \cite{Brown07} \cite{Brown03}.  A full discussion
+on related works is outside the scope of this paper, readers are
+referred to~\cite{Szeliski05imagealignment} for an excellent survey.
+Given the maturity of this area, there are various freeware as well as
+commercial software available for performing image stitching; most
+notable are AutoStitch \cite{autostitch} , Microsoft’s Image
+Compositing Editor \cite{ICE}, and Adobe’s Photoshop \cite{photoshop}.
+All of these methods are based on a similar strategy of finding
+features in each image, matching these features between images, and
+then computing pairwise image warps to align them together.  A global
+bundle adjustment is often applied to globally refine the alignment.
+All of the aforemention methods assume the imaged scene is planar or
+that the camera has been rotated carefully around its center of
+projection to avoid parallax.
 
-Gao et al. \cite{Gao} have used concept of ``Dual Homography'' to stitch
-non-planar patches in images. Lhuillier et al.\cite{Lhuillier} have successfully
-stitched images with motion parallax i.e., relief mosaics, using joint view triangulation. 
-Acha et al. \cite{Acha} aligned dynamic scenes using notion of ``dynamics
-constancy''. 
+% MSB - I'm not sure how any of these are relevant to what you are doing
+%There has been work to address non-planar scenes.  Gao et al. \cite{Gao} have
+% used the concept of ``Dual Homography'' to stitch non-planar patches in images. Lhuillier \etal \cite{Lhuillier}
+%have successfully stitched images with motion parallax \ie relief
+%mosaics, using joint view triangulation.  Acha \etal \cite{Acha} have
+%aligned dynamic scenes using the notion of ``dynamics constancy''.
 
-Agarwala et al.\cite{Agarwala2006} had used Markov Random Field (MRF)
-optimization for stitching relatively sparse set of images captured using
-handheld still camera which is moved along the scene. Eden et al. \cite{Eden}
-were able to stitch images with large exposure difference as well as large
-scene motion into single HDR quality image without using any additional camera hardware.
+% MSB - I'm also not sure how this is relevant to what you are doing
+%Agarwala \etal \cite{Agarwala2006} have used Markov Random Field (MRF)
+%optimization for stitching a relatively sparse set of images captured
+%using handheld still camera which is moved along the scene.
+Brown \etal \cite{Brown05} have used a new type of invariant features
+located at Harris corners in discrete scale-space and oriented using a
+blurred local gradient for stitching. Eden \etal \cite{Eden} were
+able to stitch images with large exposure difference as well as large
+scene motion into single HDR quality image without using any
+additional camera hardware.
 
-All of the image mosaicing methods works only when there is a
-``intersection'' in feature space of images to be stitched. But, when there are
-``gaps'' (either physical or due to lach of features) between images to be
-stiched, we may have to use some other alignement method. In this paper, we use
-stereo method to do alignement of images. Peleg et al. \cite{Peleg} have used
-similar concept to create Stereo Panorama with a single camera.
+All of the image mosaicing methods work only when there is a
+``intersection'' in feature space of images to be stitched. When there
+are ``gaps'' (either physical or due to lack of features) between
+images to be stitched it is not clear how to perform the stitching. In
+this paper, we discuss how to use the available IMU data that
+accompanies our input images to help overcome these problems.
+
+%Peleg et al. \cite{Peleg} have used similar concept to create Stereo Panorama
+%with a single camera.
 
 \section{Methodology}
 
+% MSB - if you do not demonstrate any example of a scene lying on more than
+% one plane, you should not list it as a goal.  All goals listed must be demonstrated.
 The goal of this paper is to compute a panorama of a scene lying on
-one or many planar surfaces.  A schematic of two possible scenes for
+planar surface that has regions of vacant spaces.  A schematic for
 this problem is shown in Figure~\ref{fig:schematic}.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/indoor}   
-  \caption{ \label{fig:schematic} Problem definition: Dead space is
-    encountered in varoious scenes.  When individual
-    portions are captured by a quadcopter, how does one create the
-    complete mosaic given that common features are either not
-    available, or confusing?
+  \includegraphics[width=0.49\textwidth]{figures/indoor}\\
+  \includegraphics[width=0.49\textwidth]{figures/stereoOverlap}\\
+
+  \caption{ \label{fig:schematic} Problem definition. (Top) Vacant spaces
+    are encountered in various scenes.  When individual portions are
+    captured by a quadcopter, how does one create the complete mosaic
+    given that common features are either not available, or
+    confusing?\\
+    (Bottom) Simplified reduction of the problem to a geometrical structure.
   }
 \end{figure}    
 
-The method adopted consists of three steps described below. An
-overview is shown in Figure~\ref{fig:workflow}.  In brief, we
-systematically acquire a video of the scene, reduce the large number
-of images into a manageable number, and finally mashup the images
-acquired from different positions into a mosaic.
+% MSB - Mashup, what does this mean.  It isn't a technical term.
+The method adopted is pictorially depicted in the overview shown in
+Fig.~\ref{fig:workflow} and is described in detail later on.  In
+brief, we systematically acquire a video of the scene, reduce the large
+number of images into a manageable number, and finally combine the
+images acquired from different positions into a mosaic.
 
-\begin{figure}[b!]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.49\textwidth]{figures/Workflow} 
   \caption{ \label{fig:workflow} Overview: Input imagery is
-    systematically acquired (top Row, column 1) by a quadcopter.  In the next
-    step (top row, column 2), interesting images are found by clustering
-    the video into regions based on IMU data.  A graph (top row, column 3) is
-    constructed by finding homography among only neighbourhood(
-    established from again IMU data) images. For each connected component in a
-    graph, a mini-panoramas is created (bottom row, right column) which are then
-    joined together into super panorama (bottom row, left column)using IMU
-    data.}
+    systematically acquired (top left) by a quadcopter.  In the next
+    step, interesting images are found by clustering the video into
+    regions based on positional data.  A graph is constructed using
+    proximal images. For each connected component in a graph, standard
+    stitching techniques are used to create mini-panoramas which are
+    then joined together into super panorama 
+    again using IMU data.}
 \end{figure}    
 
 
@@ -218,73 +265,123 @@ of this section, we use Autostitch to indicate state of the art
 stitching programs such as Autostitch, Photoshop, etc.
 
 \subsection{Acquiring interesting images}
-Our goal in this step is to reduce the amount of input data and produce a
-set of interesting images.  In other words, we wish to convert a video
-into an album of images.  We employ fairly standard methods available
-in the literature.  For each frame, we compute a set of global image
-descriptors such as color histogram, edges, and so on, and run a
-clustering algorithm.  The number of cluster centers is generally
-determined by the deemed capacity of, say, Autostitch.
+\label{sec:selection}
+% MSB - any citation to standard albumization?
+Our goal in this step is to reduce the amount of input data and
+produce a set of interesting images.  In other words, we wish to
+convert a video into an album of images.  The key difference between
+our problem and standard albumization \cite{Aner, Lee} is the use of 
+positional information.  A standard quadcopter has an Inertial
+Measurement Unit (IMU) that, after calibration, can give accurate
+information of positions.
 
-The key difference between our problem and standard albumization is
-the use of approximate positional information.  A standard quadcopter
-has an Inertial Measurement Unit (IMU) that, after calibration, can
-give  approximate information of positions.  It is to be noted that
-this information can be quite incorrect.  However the mix of
-positional information and image features is often sufficient to
-produce the necessary subset of `interesting images' which may now
-be given as input to Autostitch. Figure~\ref{fig:selection} shows this
-process. 
+%It is to be noted that this information can be quite incorrect.  
+Using this it is possible to cluster the images, and sort the images
+into an $m\times n$ grid.  (Occasionally we have encountered outlier
+situations and thus erroneous positional information.  Thus we believe
+standard vision-based clustering method can be used to either drop
+frames, or to correctly include frames based on image content.)  The
+number of cluster centers is automatically determined using the
+agglomerative bottom up hierarchical clustering method \cite{Lior}, with the
+additional requirement that the whole scene (represented by the
+positional data) is covered.  
+
+{\bf Clustering Details} We assume that each IMU data position
+corresponds to an image of definite fixed dimensions.  Consider each
+position of the IMU data to be leaf nodes. Two nodes are greedily
+combined based on the closest Euclidean distance, and replaced with an
+internal node.  The position of the internal node is set to be the
+centroid of the two nodes, and each internal node now corresponds to a
+virtual image taken by a virtual quadcopter.  The algorithm
+recursively merges all the nodes till we end up with a root.  In the
+next phase, we proceed top-down and level by a level to find the
+cluster centers.  A set of nodes is considered for being the output as
+cluster centers if the union of these nodes completely cover the
+scene. From the bottom-up construction, it is clear that the root will
+represent a single position, and thus a single image and most likely
+will not cover the scene.  At the other extreme, the set of all leaf
+nodes \emph{will} cover the scene.  The top-down algorithm proceeds
+top-down and finds the minimal set of nodes which cover the scene.
+Once cluster centers are found, we pick the leaf node which is closest
+to the cluster center to find a real image.
+This process is pictorially described in
+Fig.~\ref{fig:selection}.
+
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.49\textwidth]{figures/selection} 
-  \caption{ \label{fig:selection}  Using IMU data, an image stream is
-  transformed into a set of interesting images for purposes of panorama creation. IMU
-    data is hierarchically clustered to find out positions which may cover the
-    imaging space. Clustering threshold is kept in a such a way that images
-    taken from these points will cover whole scene optimally.}
+  \caption{ \label{fig:selection} Using IMU data, an image stream is
+    transformed into a set of interesting images for purposes of
+    panorama creation. }
 \end{figure}    
 
+% MSB - what is meant by ``wrong position'', how will the reader know 
+% this is relevant to the problem here.  Why not discuss vacant space,
+% the message is being muddled? 
+In practice, the number of cluster centers for the scenes we have
+covered is now within the capacity of Autostitch.  As mentioned in the
+introduction, as long as there are sufficiently varying and
+``matchable'' features, Autostitch is able to perform a reasonable
+result.  However, if there are very few features in overlapping region
+of two images, then the output is not acceptable. This situation will
+arise when there is vacant space between two pictures.
 
-As mentioned in the introduction, as long as there are sufficiently
-varying and ``matchable'' features, Autostitch is able to perform a
-pleasant stitching.  However, if the features are in the ``wrong''
-positions, then the output is not acceptable.
+{\bf Time complexity} Autostitch has not been designed
+to use positional information. As a result if there are $N$ input
+images, the program has to consider possible matches in approximately
+$O(N^2)$ set of areas.  Our program is able to mosaic in an $O(N)$
+fashion.
 
-Significantly, Autostitch has not been designed to use positional
-information. As a result if there are N input images, the program has
-to consider possible matches in an $O(N^2)$ set of areas.  Our program
-is able to mosaic in an $O(N)$ fashion.
- 
+% MSB - There are no details to the clustering, or the "postulating" of edges.
+{\bf Graph Creation Details}
 Specifically, we assume at this point that the interesting photos are
-available in the form of a $m \times n$ grid. We create a graph with
-images being nodes, and postulate edges between two nodes if we are
-able to ``do successful matches''. Recall at this point that if there
-are ``dead spaces'' there will not be enough features for successful
-matches; the graph will end up with multiple (disconnected)
-components.  We next compute multiple spanning trees for the various
-components. If the result is single tree, then we stitch all pictures
-using the homographies.  The spanning tree is an $O(N)$ structure. The
-process is described in Figure~\ref{fig:graph}.
+available in the form of a $m \times n$ grid. First, we find SURF
+\cite{Bay} features for each image in a grid. Next, we use Best of
+Nearest Neighbour matcher (from the OpenCV library) with Random Sample
+Consensus (RANSAC) \cite{Fischler1981} to find geometrically
+consistent matches between neighbourhood images inside grid.  We
+create a graph with images being nodes, and add an edge between two
+nodes if there are sufficient matches. We have to recall at this point
+that if there are ``vacant spaces'' there will not be enough features
+for successful matches; the graph will end up with multiple
+(disconnected) components.  We next compute multiple spanning trees
+for the various components. Given a spanning tree, the center of the
+spanning tree is a node from which the distance to all other nodes is
+minimal. Next we calculate the homography of each image with respect
+to spanning tree center.  Finally, for each spanning tree, we stitch
+all pictures using the computed homographies by warping all images
+with reference to image at spanning tree center. The spanning tree is
+an $O(N)$ structure. The process is described in
+Figure~\ref{fig:graph}.
+% above - what homographies. there has been no discussion on how
+% warps are estimated from the features. . or even the features used.
+% is ransac used?  do you call autostitch.  you can't get away with 
+% not discussing this in ICCV.  The paper reads like a high-level
+% sketch of an procedure, but lacks technical depth
+
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.49\textwidth]{figures/graph} 
+  \includegraphics[width=0.49\textwidth]{figures/graphCreation} 
   \caption{ \label{fig:graph} Interesting images acquired are
     segmented and individual (mini-panoramas) are constructed. These
-    are then later combined into the desired (super)panorama using IMU data.}
+    are then later combined into the desired super-panoramas using IMU data.}
 \end{figure}    
 
 
 \subsection{Super-panoramas}
-We assume that the output of the previous step has resulted in
-multiple spanning trees where each cluster center corresponds to a
-specific depth. We now create individual panoramas for each spanning
-tree; we term these as mini-panoramas. We then proceed to create the
-desired output, termed super-panorama.  A super-panorama must be
-created from mini-panoramas; these usually correspond to different
-depths for at least two reasons.
+% MSB - Why do you assume each spanning tree corresponds to a specific depth?
+% There is no details to this?  
+In this section, we consider the situation when programs like
+Autostitch fail.  We assume that the output of the previous step has
+resulted in multiple spanning trees where each spanning tree center
+corresponds to a specific depth. This is the depth of the center of
+the spanning tree, since we have stitched all images by taking the
+spanning tree center as a reference.  Individual panoramas for each
+spanning tree termed mini-panoramas have been created. A
+super-panorama must be created from mini-panoramas; these usually
+correspond to different depths for at least two reasons.
 
 First, it is invariably difficult, if not impossible, to control a
 quadcopter to be at the exact depth even in indoor scenes.  The
@@ -301,19 +398,24 @@ Figure~\ref{fig:stereo}).
   \includegraphics[width=0.4\textwidth]{figures/stereo} 
   \caption{ \label{fig:stereo} Top: The virtual picture as seen from position B'
     is computed using Equation~\ref{eq:moveRelation} from the real picture
-    taken from B.  Bottom: Using the disparity, and the baseline width
-  it is possible to compute the scene from the view point of A.}
+    taken from B.  Bottom: Using the disparity, and the baseline width,
+  it is possible to depict the composite scene obtained from both A
+  and B' from the view point of A.}
 \end{figure}    
 Assume that a mini-panorama is created from these two areas, and the
 depth of the planar surface from the camera is more for A, than for
 B. We then take the mini-panorama image captured at B, and `move' it to
-a new location B’ whose depth (from the imaged wall) is the same as
+a new location B’ whose depth (from the imaged surface) is the same as
 that of A. The resulting image  will be smaller than: the images are
 related by the equation
 \begin{equation}
   \label{eq:moveRelation}
   {\bf \frac{x'}{x} = \frac{Z}{Z'}}
 \end{equation}
+where {\bf x} (respectively {\bf x'}) represents a pixel location of
+the image in B (respectively, B') and 
+{\bf Z} (respectively {\bf Z'}) represents the dept of the images
+surface from B (respectively, B').
 
 We can now treat the resulting images from A (unchanged) and B’
 (computed from Equation~\ref{eq:moveRelation}) forming a stereo pair.
@@ -324,10 +426,11 @@ view point of A thereby creating a super-panorama.
 
 \section{Concluding remarks}
 
+% pleasing composite doesn't make scene.  
 In this paper, we have defined a new problem, that of computing a
-mosaic of a planar scene with dead space.  Dead space relates to images
+mosaic of a planar scene with vacant spaces.  Vacant space relates to images
 in an input stream where there are not enough features for traditional
-mosaicing algorithms to stitch together a pleasing composite.  
+mosaicing algorithms to estimate geometric warps to align the images.
 
 Our solution to this problem is to use an autonomous quadcopter which
 is capable of taking pictures.  The quadcopter has an inertial
