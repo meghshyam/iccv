@@ -52,18 +52,20 @@ School of Computing, NUS, Singapore\\
   mosaicing techniques.  
 
   We describe a framework that is able to handle this unique input by
-  leveraging the availability of the inertial magnetic unit (IMU) data
-  from the quadcopter that is synchronized with the input images.
+  leveraging the availability of the inertial measurement unit (IMU)
+  data from the quadcopter that is synchronized with the input images.
   Specifically, our method uses the accompanying IMU data to select a
-  subset of images that contain interesting scene content.  These
-  images are then grouped into subgraphs, again using the IMU data,
-  that can be stitched into a series of non-overlapping
-  mini-panoramas.  The gaps of these mini-panoramas represent regions
-  of featureless spaces in the scene.  We once again use the IMU data
-  together with coarse stereo reconstruction to determine the
-  appropriate images in the input sequence to use to fill in the vacant
-  spaces.  We demonstrate the efficacy of our approach on a number of
-  input sequences that cannot to be mosaiced by existing methods.
+  subset of images that contain interesting scene content. When this
+  subset contains no vacant space, the subset results in an
+  appropriate panorama; however, with white spaces, the subset is
+  partitioned into multiple clusters, again using the IMU data.  These
+  subsets can now be stitched into a series of mini-panoramas; the
+  gaps between these mini-panoramas represent regions of featureless
+  spaces in the scene.  We once again use the IMU data together with
+  coarse stereo reconstruction to determine appropriate portions of
+  the images to complete the panorama. We demonstrate the efficacy of
+  our approach on a number of input sequences that cannot to be
+  mosaiced by existing methods.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
@@ -112,7 +114,7 @@ have no matches and therefore cannot be aligned using traditional mosaicing meth
 
 {\bf Key Idea} We propose to solve the vacant space problem by using
 an inexpensive off-the-shelf flying device, such as a quadcopter which
-can be assumed to contain an inertial maganetic unit (IMU) that has
+can be assumed to contain an inertial measurement unit (IMU) that has
 positional information time synchronized with an input video.  The
 proximity relationship that the resultant images have can be used to
 significantly reduce the search space in finding matches.  Further,
@@ -122,7 +124,7 @@ reason to believe that two images are adjacent horizontally, one can
 choose to adjust thresholds in feature matching algorithm to hunt for
 otherwise elusive matching pairs.
 
-We note that positions can be also be made available in other devices
+We note that positions can be also made available in other devices
 such as smartphones.  An autonomous programmed quadcopter, however, is
 particularly enticing because of its ability to fly to areas that are
 accessible to the human eye, but inaccessible for the
@@ -144,7 +146,8 @@ $O(N)$ algorithm.  A sample result of our approach is shown in
 Figure~\ref{fig:teaser}.  Other results are available in the
 experiments section and also in the supplementary material.
 
-{\bf Limitations} In this paper, we assume that the
+%{\bf Limitations} 
+In this paper, we assume that the
 scene lies on a planar surface, or can be deemed to lie on a planar surface. The
 standard homography computation is still not possible because of the
 vacant spaces. To overcome this, we reduce the mosaicing problem to
@@ -168,7 +171,7 @@ on related works is outside the scope of this paper, readers are
 referred to~\cite{Szeliski05imagealignment} for an excellent survey.
 Given the maturity of this area, there are various freeware as well as
 commercial software available for performing image stitching; most
-notable are AutoStitch \cite{autostitch} , Microsoft’s Image
+notable are AutoStitch \cite{autostitch}, Microsoft’s Image
 Compositing Editor \cite{ICE}, and Adobe’s Photoshop \cite{photoshop}.
 All of these methods are based on a similar strategy of finding
 features in each image, matching these features between images, and
@@ -230,7 +233,7 @@ this problem is shown in Figure~\ref{fig:schematic}.
 
 % MSB - Mashup, what does this mean.  It isn't a technical term.
 The method adopted is pictorially depicted in the overview shown in
-Fig.~\ref{fig:workflow} and is described in detail later on.  In
+Figure~\ref{fig:workflow} and is described in detail later on.  In
 brief, we systematically acquire a video of the scene, reduce the large
 number of images into a manageable number, and finally combine the
 images acquired from different positions into a mosaic.
@@ -288,7 +291,7 @@ positional data) is covered.
 
 {\bf Clustering Details} We assume that each IMU data position
 corresponds to an image of definite fixed dimensions.  Consider each
-position of the IMU data to be leaf nodes. Two nodes are greedily
+position of the IMU data to be a leaf node. Two nodes are greedily
 combined based on the closest Euclidean distance, and replaced with an
 internal node.  The position of the internal node is set to be the
 centroid of the two nodes, and each internal node now corresponds to a
@@ -305,7 +308,7 @@ top-down and finds the minimal set of nodes which cover the scene.
 Once cluster centers are found, we pick the leaf node which is closest
 to the cluster center to find a real image.
 This process is pictorially described in
-Fig.~\ref{fig:selection}.
+Figure~\ref{fig:selection}.
 
 
 \begin{figure}[h!]
@@ -334,13 +337,13 @@ $O(N^2)$ set of areas.  Our program is able to mosaic in an $O(N)$
 fashion.
 
 % MSB - There are no details to the clustering, or the "postulating" of edges.
-{\bf Graph Creation Details}
+{\bf Spanning Trees}
 Specifically, we assume at this point that the interesting photos are
 available in the form of a $m \times n$ grid. First, we find SURF
 \cite{Bay} features for each image in a grid. Next, we use Best of
-Nearest Neighbour matcher (from the OpenCV library) with Random Sample
+Nearest Neighbor matcher (from the OpenCV library) with Random Sample
 Consensus (RANSAC) \cite{Fischler1981} to find geometrically
-consistent matches between neighbourhood images inside grid.  We
+consistent matches between neighborhood images inside grid.  We
 create a graph with images being nodes, and add an edge between two
 nodes if there are sufficient matches. We have to recall at this point
 that if there are ``vacant spaces'' there will not be enough features
@@ -351,7 +354,7 @@ spanning tree is a node from which the distance to all other nodes is
 minimal. Next we calculate the homography of each image with respect
 to spanning tree center.  Finally, for each spanning tree, we stitch
 all pictures using the computed homographies by warping all images
-with reference to image at spanning tree center. The spanning tree is
+with reference to the image at spanning tree center. The spanning tree is
 an $O(N)$ structure. The process is described in
 Figure~\ref{fig:graph}.
 % above - what homographies. there has been no discussion on how
@@ -400,13 +403,13 @@ Figure~\ref{fig:stereo}).
     is computed using Equation~\ref{eq:moveRelation} from the real picture
     taken from B.  Bottom: Using the disparity, and the baseline width,
   it is possible to depict the composite scene obtained from both A
-  and B' from the view point of A.}
+  and B' (from the view point of A).}
 \end{figure}    
 Assume that a mini-panorama is created from these two areas, and the
 depth of the planar surface from the camera is more for A, than for
 B. We then take the mini-panorama image captured at B, and `move' it to
 a new location B’ whose depth (from the imaged surface) is the same as
-that of A. The resulting image  will be smaller than: the images are
+that of A. The resulting image  will be smaller; the images are
 related by the equation
 \begin{equation}
   \label{eq:moveRelation}
@@ -414,13 +417,14 @@ related by the equation
 \end{equation}
 where {\bf x} (respectively {\bf x'}) represents a pixel location of
 the image in B (respectively, B') and 
-{\bf Z} (respectively {\bf Z'}) represents the dept of the images
+{\bf Z} (respectively {\bf Z'}) represents the depth of the images
 surface from B (respectively, B').
 
 We can now treat the resulting images from A (unchanged) and B’
 (computed from Equation~\ref{eq:moveRelation}) forming a stereo pair.
-Using the stereo disparity formula we can ``place'' the image from B from the
-view point of A thereby creating a super-panorama.
+Using the stereo disparity formula we can ``place,'' from the view
+point of A, the image captured from B, thereby creating a
+super-panorama.
 
 \input{experiments_results}
 
@@ -437,7 +441,7 @@ is capable of taking pictures.  The quadcopter has an inertial
 measurement unit that is capable of outputting approximate
 positions. Using this positional information, our algorithm selects an
 ``interesting'' subset of the video imagery.  This subset consists of
-pictures taken with a ``moving'' camera; we reduce the resulting
+pictures taken with a moving camera; we reduce the resulting
 problem of computing a mosaic by reduction to the stereo problem.  Our
 method works on both indoor and outdoor scenes.
 

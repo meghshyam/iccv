@@ -4,9 +4,10 @@
 % MSB - what ground truth?  This is confusing, what do you mean by ground truth?
 All our experiments have been completed with the inexpensive consumer
 quadcopter called a Parrot's AR Drone 2.0. We have used the ROS based
-ARDrone Autonomy Driver to communicate with the drone. For the
-purpose of this paper, we also took a  picture of the scene from a
-distance with a 5 mega-pixel camera.
+ARDrone Autonomy Driver to communicate with the drone. For the purpose
+of showing the efficacy of this paper, we also took a picture of the
+scene from a distance with a 5 mega-pixel camera to better understand
+the scene.
 
 We have implemented our algorithm in C++ using the OpenCV library
 (OpenCV 2.4.9). Experiments were performed on a PC with Intel Core i7
@@ -14,7 +15,6 @@ processor(@3.4GHz) and 8GB RAM.  The source code to produce
 interesting images from a video, and to generate the super-panorama,
 as well as the data sets used in this paper will be made publicly
 available.
-
 
 \subsection{Selecting Images}
 
@@ -26,7 +26,7 @@ in an outdoor environment. We note here that there were approximately
 with this large number of frames.
 
 One way to produce some sort of mosaic was to simply reduce the amount
-of data given to Autostitch.  Fig.~\ref{fig:sac3}(a) shows uniformly
+of data given to Autostitch.  Figure~\ref{fig:sac3}(a) shows uniformly
 (time) sampled images from the video.  When these sampled images are
 given to Autostitch or to Adobe Photoshop, we find
 (Figure~\ref{fig:sac3}(b)) that these programs are able to produce
@@ -37,7 +37,7 @@ Instead of feeding time-sampled images, we ran our saliency selection
 algorithm (as explained in Section~\ref{sec:selection}) on the video
 which resulted in $N = 5$ images.  Though the number of input images
 in the video is large, the total distance covered by the quadcopter in
-this duration (of around 90 seconds at 30fps) is small; thus the
+this duration (of around 90 seconds) is small; thus the
 number of distinct images returned by the algorithm shows a dramatic
 reduction. Figure~\ref{fig:sac3}(c) shows examples of selected images.
 Many of the images are similar to the time sampled version; however,
@@ -89,7 +89,7 @@ A sample of the selected images are seen in Figure~\ref{fig:teaser}.
   presumably because of the confusion in features. (d) Output of Adobe
   Photoshop PS6 on the selected images. The vacant space posed a
   problem to the feature matching algorithm, so instead of a mosaic,
-  individual pieces were output as mini-panaromas (e) Our output on
+  individual pieces were output as mini-panoramas (e) Our output on
   the selected images. We are able to join two posters (separated by
   vacant space) using IMU data.}
 \label{fig:results}
@@ -125,9 +125,10 @@ state of the art stitchers with the output of our algorithm.
 %   presumably because of the confusion in features. (d) Output of Adobe
 %   Photoshop PS6 on the selected images. The vacant space posed a
 %   problem to the feature matching algorithm, so instead of a mosaic,
-%   individual pieces were output as mini-panaromas (e) Our output on
+%   individual pieces were output as mini-panoramas (e) Our output on
 %   the selected images. We are able to join two posters (separated by
 %   vacant space) using IMU data.}
 % \label{fig:results2}
 % \end{figure}
 
+Please see supplementary material for results on other datasets.
