@@ -80,7 +80,7 @@ finding common features in the images that can be used to established the
 
 There are scenes, however, that consist of image content that makes this
 challenging.  One situation is when scene patterns and texture are repeated.  
-This can make it challenging for matching to find appropriate matches.
+This can make it challenging for matching algorithm to find appropriate matches.
 %Figure 1 shows an example of this.
 A more serious situation is when a scene area simply
 does not contain features.  This sort of situation occurs in a variety
@@ -94,7 +94,7 @@ have no matches and therefore cannot be aligned using traditional mosaicing meth
 
 \begin{figure}[t!]
   \centering
-  \includegraphics[width=0.57\textwidth]{figures/teaser.pdf}
+  \includegraphics[width=0.53\textwidth]{figures/teaser.pdf}
   \caption{ \label{fig:teaser} The long range photograph of a scene when probed
     by a quadcopter results in the input images shown on the left.  The
     state of the art methods (middle column) are unable to make a mosaic because the
@@ -116,7 +116,7 @@ have no matches and therefore cannot be aligned using traditional mosaicing meth
 an inexpensive off-the-shelf flying device, such as a quadcopter which
 can be assumed to contain an inertial measurement unit (IMU) that has
 positional information time synchronized with an input video.  The
-proximity relationship that the resultant images have can be used to
+proximity relationship that the resultant images have, can be used to
 significantly reduce the search space in finding matches.  Further,
 the proximity relationship also allows, in principle, to vary the
 parameters involved in feature selection. For example, if there is
@@ -153,7 +153,6 @@ standard homography computation is still not possible because of the
 vacant spaces. To overcome this, we reduce the mosaicing problem to
 the stereo problem and are thus able to complete the panorama.
 
-
 The rest of this paper is organized as follows.  In the next section,
 we discuss related work.  Subsequently we describe the main steps in
 our process, and justify the process in Section~\ref{sec:results} with
@@ -171,13 +170,15 @@ on related works is outside the scope of this paper, readers are
 referred to~\cite{Szeliski05imagealignment} for an excellent survey.
 Given the maturity of this area, there are various freeware as well as
 commercial software available for performing image stitching; most
-notable are AutoStitch \cite{autostitch}, Microsoft’s Image
-Compositing Editor \cite{ICE}, and Adobe’s Photoshop \cite{photoshop}.
+notable are AutoStitch \cite{autostitch}, Microsoft\textsc{\char13}s Image
+Compositing Editor \cite{ICE}, and Adobe\textsc{\char13}s Photoshop
+\cite{photoshop}.
+
 All of these methods are based on a similar strategy of finding
 features in each image, matching these features between images, and
 then computing pairwise image warps to align them together.  A global
 bundle adjustment is often applied to globally refine the alignment.
-All of the aforemention methods assume the imaged scene is planar or
+All of the aforementioned methods assume the imaged scene is planar or
 that the camera has been rotated carefully around its center of
 projection to avoid parallax.
 
@@ -263,7 +264,7 @@ quadcopter is beyond the scope of this paper.
 
 The quadcopter returns with a video of the scene.  Any short video of
 about a minute or more when given to a stitching program such as
-Autostitch overwhelms the programs rendering it unusable. In the rest
+Autostitch overwhelms the program, rendering it unusable. In the rest
 of this section, we use Autostitch to indicate state of the art
 stitching programs such as Autostitch, Photoshop, etc.
 
@@ -274,8 +275,8 @@ Our goal in this step is to reduce the amount of input data and
 produce a set of interesting images.  In other words, we wish to
 convert a video into an album of images.  The key difference between
 our problem and standard albumization \cite{Aner, Lee} is the use of 
-positional information.  A standard quadcopter has an Inertial
-Measurement Unit (IMU) that, after calibration, can give accurate
+positional information.  A standard quadcopter has an inertial
+measurement unit (IMU) that, after calibration, can give accurate
 information of positions.
 
 %It is to be noted that this information can be quite incorrect.  
@@ -304,7 +305,7 @@ scene. From the bottom-up construction, it is clear that the root will
 represent a single position, and thus a single image and most likely
 will not cover the scene.  At the other extreme, the set of all leaf
 nodes \emph{will} cover the scene.  The top-down algorithm proceeds
-top-down and finds the minimal set of nodes which cover the scene.
+from root and finds the minimal set of nodes which cover the scene.
 Once cluster centers are found, we pick the leaf node which is closest
 to the cluster center to find a real image.
 This process is pictorially described in
@@ -315,7 +316,7 @@ Figure~\ref{fig:selection}.
   \centering
   \includegraphics[width=0.49\textwidth]{figures/selection} 
   \caption{ \label{fig:selection} Using IMU data, an image stream is
-    transformed into a set of interesting images for purposes of
+    transformed into a set of interesting images for purpose of
     panorama creation. }
 \end{figure}    
 
@@ -351,7 +352,7 @@ for successful matches; the graph will end up with multiple
 (disconnected) components.  We next compute multiple spanning trees
 for the various components. Given a spanning tree, the center of the
 spanning tree is a node from which the distance to all other nodes is
-minimal. Next we calculate the homography of each image with respect
+minimal \cite{Kocay}. Next we calculate the homography of each image with respect
 to spanning tree center.  Finally, for each spanning tree, we stitch
 all pictures using the computed homographies by warping all images
 with reference to the image at spanning tree center. The spanning tree is
@@ -399,9 +400,9 @@ Figure~\ref{fig:stereo}).
   \centering
   \includegraphics[width=0.4\textwidth]{figures/move} \\
   \includegraphics[width=0.4\textwidth]{figures/stereo} 
-  \caption{ \label{fig:stereo} Top: The virtual picture as seen from position B'
-    is computed using Equation~\ref{eq:moveRelation} from the real picture
-    taken from B.  Bottom: Using the disparity, and the baseline width,
+  \caption{ \label{fig:stereo} (Top) The virtual picture as seen from position
+  B' is computed using Equation~\ref{eq:moveRelation} from the real picture
+    taken from B.  (Bottom) Using the disparity, and the baseline width,
   it is possible to depict the composite scene obtained from both A
   and B' (from the view point of A).}
 \end{figure}    
