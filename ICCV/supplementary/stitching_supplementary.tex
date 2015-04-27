@@ -29,11 +29,18 @@
 \textbf{Description}
 We have added output in the supplementary material which we were not able
 to include in the ``Experiments and Results'' section of original paper due to
-the page restriction.  
+the page restriction. Additionally, we have put video recordings (recorded
+through quadcopter) in folder named ``video''. 
+
+The file `teaser.avi' refers to results shown in Figure 1 in main paper.
+The file `lady1.avi' refers to results shown in Figure 7 in main paper.
+Finally, the file `greenRed.avi' refers to results shown in Figure 8 in main
+paper.
+ 
 
 \begin{figure*}[h!]
 \centering
-\includegraphics[width=0.87\linewidth]{figures/sac1.pdf}
+\includegraphics[width=0.87\linewidth]{figures/lady2.pdf}
 \caption{ (a) Uniformly sampled images from an outdoor video
   expedition.  (b) Salient image selection from the set of
   approximately 9000 images using positional information. (c) Autostitch output
@@ -41,7 +48,7 @@ the page restriction.
 \label{fig:validResults}
 \end{figure*}
 
-The input stream had about 9000 images. The selection
+The input stream (videos/lady2.avi) had about 9000 images. The selection
 algorithm pruned the video into $N=15$ images. The scene as captured by a smartphone can also be seen in
 Figure~\ref{fig:validResults}(a). A sample of the
 selected images are seen in Figure~\ref{fig:validResults}(b).
@@ -52,7 +59,7 @@ well as Photoshop.
 
 \begin{figure*}[h!]
 \centering
-\includegraphics[width=0.8\linewidth]{figures/sac2.pdf}
+\includegraphics[width=0.8\linewidth]{figures/longwall.pdf}
 \caption{ (a) Uniformly sampled images from an outdoor video
   expedition.  (b) Salient image selection from the set of
   approximately 9000 images using positional information. (c) Autostitch output
@@ -60,7 +67,7 @@ well as Photoshop.
 \label{fig:validResults1}
 \end{figure*}
 
-The input stream had about 4000 images. The selection
+The input stream (videos/longwall.avi) had about 4000 images. The selection
 algorithm pruned the video into $N=19$ images.
 The scene as captured by a smartphone can also be seen in
 Figure~\ref{fig:validResults1}(a). A sample of the
@@ -88,10 +95,10 @@ well as Photoshop.
 \label{fig:results1}
 \end{figure*}
 
-The input stream had about 9100 images. The selection
+The input stream (videos/orangeBlue.avi) had about 9100 images. The selection
 algorithm pruned the video into $N=28$ images. The scene as captured by a smartphone can also be seen in
 Figure~\ref{fig:results1}(a). A sample of the
-selected images are seen in Figure~\ref{fig:results}(b).
+selected images are seen in Figure~\ref{fig:results1}(b).
 Figure~\ref{fig:results1}(c,d,e) shows the comparison of outputs of state
 of the art stitchers with the output of our algorithm. As there are vacant
 spaces, Autostitch as well as Photoshop are not able to stitch images
@@ -113,11 +120,11 @@ accurately. But, as we are using IMU data, our output is closest to input scene.
 \label{fig:results2}
 \end{figure*}
 	
-The input stream had about 8500 images. The selection
+The input stream (videos/purpleRed.avi) had about 8500 images. The selection
 algorithm pruned the video into $N=17$ images.The scene as captured by a smartphone can also be seen in
-Figure~\ref{fig:results1}(a). A sample of the
-selected images are seen in Figure~\ref{fig:results}(b).
-Figure~\ref{fig:results1}(c,d,e) shows the comparison of outputs of state
+Figure~\ref{fig:results2}(a). A sample of the
+selected images are seen in Figure~\ref{fig:results2}(b).
+Figure~\ref{fig:results2}(c,d,e) shows the comparison of outputs of state
 of the art stitchers with the output of our algorithm. As there are vacant
 spaces, Autostitch as well as Photoshop are not able to stitch images
 accurately. But, as we are using IMU data, our output is closest to input scene.
