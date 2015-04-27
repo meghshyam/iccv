@@ -24,40 +24,55 @@
 %%%%%%%%% TITLE
 \title{Mosaicing Scenes with Vacant Spaces (Supplementary Material)}
 
-\author{Meghshyam G. Prasad and Sharat Chandran\\
-Dept of Computer Science \& Engineering, \\
-Indian Institute of Technology Bombay\\
-{\tt\small \{meghshyam, sharat \}@cse.iitb.ac.in }
-% For a paper whose authors are all at the same institution,
-% omit the following lines up until the closing ``}''.
-% Additional authors and addresses can be added with ``\and'',
-% just like the second author.
-% To save space, use either the email address or home page, not both
-\and
-Michael S. Brown\\
-School of Computing, NUS, Singapore\\
-{\tt\small brown@comp.nus.edu.sg}
-}
-
 \maketitle
-\begin{center}
+
 \textbf{Description}
-\end{center}
 We have added output in the supplementary material which we were not able
 to include in the ``Experiments and Results'' section of original paper due to
 the page restriction.  
 
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=0.87\linewidth]{figures/sac1.pdf}
+\caption{ (a) Uniformly sampled images from an outdoor video
+  expedition.  (b) Salient image selection from the set of
+  approximately 9000 images using positional information. (c) Autostitch output
+  (d) Adobe Photoshop CS6 output (e) Our output }
+\label{fig:validResults}
+\end{figure*}
+
 The input stream had about 9000 images. The selection
-algorithm pruned the video into $N=16$ images. A sample of the
-selected images are seen in Figure~\ref{fig:results1}.  The scene as
-captured by a smartphone can also be seen, as well as the comparison
-of outputs of state of the art stitchers with output of our
-algorithm. Figure~\ref{fig:results1} shows the comparison of outputs of
-state of the art stitchers with the output of our algorithm.
+algorithm pruned the video into $N=15$ images. The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:validResults}(a). A sample of the
+selected images are seen in Figure~\ref{fig:validResults}(b).
+Figure~\ref{fig:validResults}(c,d,e) shows the comparison of outputs of state
+of the art stitchers with the output of our algorithm. As there are no vacant
+spaces, our stitching algorithm's output is similar to that of Autostitch as
+well as Photoshop.
 
 \begin{figure*}[h!]
 \centering
-\includegraphics[width=0.65\linewidth]{../figures/orange_blue}
+\includegraphics[width=0.8\linewidth]{figures/sac2.pdf}
+\caption{ (a) Uniformly sampled images from an outdoor video
+  expedition.  (b) Salient image selection from the set of
+  approximately 9000 images using positional information. (c) Autostitch output
+  (d) Adobe Photoshop CS6 output (e) Our output }
+\label{fig:validResults1}
+\end{figure*}
+
+The input stream had about 4000 images. The selection
+algorithm pruned the video into $N=19$ images.
+The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:validResults1}(a). A sample of the
+selected images are seen in Figure~\ref{fig:validResults1}(b).
+Figure~\ref{fig:validResults1}(c,d,e) shows the comparison of outputs of state
+of the art stitchers with the output of our algorithm. As there are no vacant
+spaces, our stitching algorithm's output is similar to that of Autostitch as
+well as Photoshop.
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/orange_blue.pdf}
 \caption{(a) An outdoor scene captured by a standard camera in an
   exhibition. The approach to the area is normally cordoned off and one
   needs permission to get a quadcopter to take the picture.  Notice a
@@ -72,15 +87,22 @@ state of the art stitchers with the output of our algorithm.
   vacant space) using IMU data.}
 \label{fig:results1}
 \end{figure*}
-	
+
+The input stream had about 9100 images. The selection
+algorithm pruned the video into $N=28$ images. The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:results1}(a). A sample of the
+selected images are seen in Figure~\ref{fig:results}(b).
+Figure~\ref{fig:results1}(c,d,e) shows the comparison of outputs of state
+of the art stitchers with the output of our algorithm. As there are vacant
+spaces, Autostitch as well as Photoshop are not able to stitch images
+accurately. But, as we are using IMU data, our output is closest to input scene. 
+
 \begin{figure*}[h!]
 \centering
-\includegraphics[width=0.65\linewidth]{../figures/Purple_red}
+\includegraphics[width=0.85\linewidth]{figures/Purple_red.pdf}
 \caption{(a) An outdoor scene captured by a standard camera in an
-  exhibition. The approach to the area is normally cordoned off and one
-  needs permission to get a quadcopter to take the picture.  Notice a
-  significant gap between the two posters.  (b) Pruned images from the
-  quadcopter video using our saliency algorithm. (c) Output of
+  exhibition. Notice a   significant gap between the two posters.  (b) Pruned
+  images from the quadcopter video using our saliency algorithm. (c) Output of
   Autostitch on the selected images. The mosaic is not reasonable
   presumably because of the confusion in features. (d) Output of Adobe
   Photoshop CS6 on the selected images. The vacant space posed a
@@ -90,5 +112,14 @@ state of the art stitchers with the output of our algorithm.
   vacant space) using IMU data.}
 \label{fig:results2}
 \end{figure*}
-
+	
+The input stream had about 8500 images. The selection
+algorithm pruned the video into $N=17$ images.The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:results1}(a). A sample of the
+selected images are seen in Figure~\ref{fig:results}(b).
+Figure~\ref{fig:results1}(c,d,e) shows the comparison of outputs of state
+of the art stitchers with the output of our algorithm. As there are vacant
+spaces, Autostitch as well as Photoshop are not able to stitch images
+accurately. But, as we are using IMU data, our output is closest to input scene.
+	
 \end{document}
