@@ -1,5 +1,5 @@
 #TeXlipse project settings
-#Mon Apr 20 09:55:53 IST 2015
+#Mon Apr 27 12:07:50 IST 2015
 markTmpDer=true
 builderNum=2
 outputDir=
@@ -7,8 +7,8 @@ makeIndSty=
 bibrefDir=
 outputFormat=pdf
 tempDir=tmp
-mainTexFile=stitching.tex
-outputFile=stitching.pdf
+mainTexFile=stitching_supplementary.tex
+outputFile=stitching_supplementary.pdf
 langSpell=en
 markDer=true
-srcDir=
+srcDir=supplementary/
